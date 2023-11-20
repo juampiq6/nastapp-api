@@ -106,18 +106,11 @@
 
 ### 🔧 Installation
 
-1. Clone the nastapp-api repository:
+Clone and install dependencies:
+
 ```sh
 git clone https://github.com/juampiq6/nastapp-api
-```
-
-2. Change to the project directory:
-```sh
 cd nastapp-api
-```
-
-3. Install the dependencies:
-```sh
 go get
 ```
 
