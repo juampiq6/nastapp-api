@@ -1,0 +1,3 @@
+- https://github.com/rs/zerolog logging
+- Add a API gateway
+- Authentication flow? necessary for users uploading prices? limit by time and be a simple username?
