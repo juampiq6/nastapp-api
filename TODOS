@@ -1,3 +1,5 @@
 - https://github.com/rs/zerolog logging
+- Add tests
+- Dockerize API
 - Add a API gateway
 - Authentication flow? necessary for users uploading prices? limit by time and be a simple username?
