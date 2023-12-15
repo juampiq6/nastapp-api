@@ -17,7 +17,7 @@ import (
 // @Produce      plain
 // @Param		 countryCode    path    string    true    "Country code"
 // @Param        gasPrice    body     gasprices.GasPriceArgentina  true  "The param type GasPriceArgentina is not mandatory, depends on the country pass in the query params. That is the case for Argentina"
-// @Success      200  {array}   db.PlaceResultWPrices
+// @Success      200  {string}
 // @Failure      400  {object}  router.APIError
 // @Failure      500  {object}  router.APIError
 // @Router       /gas_prices [post]
@@ -51,5 +51,5 @@ func insertPetrolPriceHandler(c *gin.Context) {
 		c.AbortWithStatusJSON(er.Code, er.Description)
 		return
 	}
-	c.String(200, id)
+	c.String(201, id)
 }
