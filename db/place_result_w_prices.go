@@ -22,6 +22,7 @@ type PlaceResultWPrices[P any] struct {
 	Prices []P `bson:"petrolPrices" json:"petrolPrices"`
 }
 
+// Returns a pointer to an array of type PlaceResultWPrices
 func PlaceResultWPricesArrayByCountry(countryCode string) *any {
 	var a any
 	switch countryCode {

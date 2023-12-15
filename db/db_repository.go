@@ -69,7 +69,7 @@ func GetGasStationsAndPricesForLocation(coord *LatLong, maxDistance *int, countr
 		return nil, err
 	}
 	res := PlaceResultWPricesArrayByCountry(countryCode)
-	if err = cur.All(context.Background(), &res); err != nil {
+	if err = cur.All(context.Background(), res); err != nil {
 		return nil, err
 	}
 	return res, nil
