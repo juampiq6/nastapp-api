@@ -2,6 +2,7 @@ package router
 
 import (
 	"encoding/json"
+	countrylocator "nastapp-api/country_locator"
 	"nastapp-api/db"
 	"nastapp-api/db/petrolprices"
 	"strings"
@@ -25,7 +26,7 @@ func insertPetrolPriceHandler(c *gin.Context) {
 	var parsingError error
 	var price interface{}
 	switch countryCode {
-	case petrolprices.Argentina:
+	case countrylocator.Argentina:
 		var p petrolprices.PetrolPriceArgentina
 		c.BindJSON(&p)
 		p.Timestamp = time.Now()

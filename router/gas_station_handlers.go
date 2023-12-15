@@ -48,15 +48,21 @@ func getGasStationsHandler(c *gin.Context) {
 	// Gets country saved in session and passes it to the db handler
 	if prices {
 		countryCode, err := getCountryFromCookiesOrFetchFromCoord(c, coord)
-		if err != nil {
-			// The request is already responded with an error, just exit this handler
-			return
+		if err == nil {
+			results, err := db.GetGasStationsAndPricesForLocation(coord, &maxDist, countryCode)
+			if err == nil {
+				c.JSON(http.StatusOK, *results)
+			}
 		}
-		results := db.GetGasStationsAndPricesForLocation(coord, &maxDist, countryCode)
-		c.JSON(http.StatusOK, *results)
 	} else {
-		results := db.GetGasStationsForLocation(coord, &maxDist)
-		c.JSON(http.StatusOK, *results)
+		results, err := db.GetGasStationsForLocation(coord, &maxDist)
+		if err == nil {
+			c.JSON(http.StatusOK, *results)
+		}
+	}
+	if err != nil {
+		e := APIError{Code: 400, Description: "Error querying database" + err.Error()}
+		c.AbortWithStatusJSON(e.Code, e)
 	}
 }
 

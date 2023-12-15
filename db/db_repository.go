@@ -12,7 +12,7 @@ import (
 const stationsCollectionName = "gas_stations"
 const petrolPricesCollectionPrefix = "petrol_price_"
 
-func GetGasStationsForLocation(coord *LatLong, maxDistance *int) *[]PlaceResult {
+func GetGasStationsForLocation(coord *LatLong, maxDistance *int) (*[]PlaceResult, error) {
 	filter := bson.D{
 		{Key: "locationGEOJson", Value: bson.D{
 			{Key: "$near", Value: bson.D{
@@ -24,17 +24,18 @@ func GetGasStationsForLocation(coord *LatLong, maxDistance *int) *[]PlaceResult 
 	}
 	cur, err := getMongoClientInstance().Database(dbName).Collection("gas_stations").Find(context.TODO(), filter)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	results := []PlaceResult{}
 
 	if err = cur.All(context.Background(), &results); err != nil {
-		panic(err)
+		return nil, err
 	}
-	return &results
+	return &results, nil
 }
 
-func GetGasStationsAndPricesForLocation(coord *LatLong, maxDistance *int, countryCode string) *[]PlaceResultWPrices {
+// Returns a pointer to an array of PlaceResultWPrices and the price struct being assigned by the countryName
+func GetGasStationsAndPricesForLocation(coord *LatLong, maxDistance *int, countryCode string) (*any, error) {
 	collection := petrolPricesCollectionPrefix + strings.ToLower(countryCode)
 	metersToRad := float64(*maxDistance) / float64(6378100)
 	filterPhase :=
@@ -65,14 +66,13 @@ func GetGasStationsAndPricesForLocation(coord *LatLong, maxDistance *int, countr
 
 	cur, err := getMongoClientInstance().Database(dbName).Collection("gas_stations").Aggregate(context.TODO(), []interface{}{filterPhase, joinPhase})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	results := []PlaceResultWPrices{}
-
-	if err = cur.All(context.Background(), &results); err != nil {
-		panic(err)
+	res := PlaceResultWPricesArrayByCountry(countryCode)
+	if err = cur.All(context.Background(), &res); err != nil {
+		return nil, err
 	}
-	return &results
+	return res, nil
 }
 
 func InsertGasPriceForStation(prices *any, countryCode string) (string, error) {
