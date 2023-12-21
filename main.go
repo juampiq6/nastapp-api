@@ -4,6 +4,7 @@ import (
 	"log"
 	db "nastapp-api/db"
 	r "nastapp-api/router"
+	"os"
 
 	"github.com/joho/godotenv"
 )
@@ -33,7 +34,11 @@ func runServer() {
 	r := r.SetupRouter()
 
 	// Listen and Server in 0.0.0.0:8080
-	r.Run(":8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	r.Run(":" + port)
 	defer db.KillMongoClient()
 }
 
