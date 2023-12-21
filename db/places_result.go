@@ -1,9 +1,8 @@
 package db
 
 type PlaceResult struct {
-	MongoId string `bson:"_id" json:"_id"`
-	// GoogleMapsId, not useful for frontend
-	// Id                string            `bson:"id" json:"id"`
+	MongoId           string            `bson:"_id" json:"_id"`
+	GmapsId           string            `bson:"id" json:"gmapsId"`
 	DisplayName       string            `bson:"displayName" json:"displayName"`
 	AddressComponents AddressComponents `bson:"addressComponents" json:"addressComponents"`
 	// FormattedAddress  string            `bson:"formattedAddress" json:"formattedAddress"`
