@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	db "nastapp-api/db"
 	r "nastapp-api/router"
@@ -25,7 +26,11 @@ import (
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
-	loadDotEnv()
+	env := os.Getenv("ENVIRONMENT")
+	fmt.Println(env)
+	if env == "local" {
+		loadDotEnv()
+	}
 	initMongoClient()
 	runServer()
 }

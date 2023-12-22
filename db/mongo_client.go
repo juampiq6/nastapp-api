@@ -42,7 +42,7 @@ func getEnvConfig() {
 	}
 	mongoConnectionString = os.Getenv("MONGO_STRING")
 	if mongoConnectionString == "" {
-		panic("You must set your 'MONGODB_URI' environment variable.")
+		panic("You must set your 'MONGO_STRING' environment variable.")
 	}
 }
 
