@@ -3,16 +3,16 @@ package router
 import (
 	"net/http"
 
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
+
+const gas_station_path = "/gas_stations"
+const petrol_price_path = "/petrol_price"
 
 func SetupRouter() *gin.Engine {
 
 	r := gin.Default()
-	store := cookie.NewStore([]byte("secretAuthKey"), []byte("secretEncryptionKey"))
-	r.Use(sessions.Sessions("countrySession", store))
+	setupCookieSession(r)
 	setupSwagger(r)
 
 	// Ping test
@@ -20,8 +20,8 @@ func SetupRouter() *gin.Engine {
 		c.String(http.StatusOK, "pong")
 	})
 
-	r.GET("/gas_stations", getGasStationsHandler)
-	r.POST("/petrol_price/:countryCode", insertPetrolPriceHandler)
+	r.GET(gas_station_path, getGasStationsHandler)
+	r.POST(petrol_price_path+"/:countryCode", insertPetrolPriceHandler)
 
 	return r
 }
