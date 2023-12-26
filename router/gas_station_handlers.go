@@ -1,6 +1,7 @@
 package router
 
 import (
+	"errors"
 	countrylocator "nastapp-api/country_locator"
 	"nastapp-api/db"
 	"net/http"
@@ -47,26 +48,32 @@ func getGasStationsHandler(c *gin.Context) {
 	}
 	// Gets country saved in session and passes it to the db handler
 	if prices {
-		countryCode, err := getCountryFromCookiesOrFetchFromCoord(c, coord)
-		if err == nil {
+		countryCode, err := getCountryFromSessionOrFetch(c, coord)
+		if err != nil {
+			e := APIError{Code: 500, Description: err.Error()}
+			c.AbortWithStatusJSON(e.Code, e)
+			return
+		} else {
 			results, err := db.GetGasStationsAndPricesForLocation(coord, &maxDist, countryCode)
-			if err == nil {
-				c.JSON(http.StatusOK, *results)
+			if err != nil {
+				e := APIError{Code: 500, Description: "Error querying database:\n" + err.Error()}
+				c.AbortWithStatusJSON(e.Code, e)
+				return
 			}
+			c.JSON(http.StatusOK, *results)
 		}
 	} else {
 		results, err := db.GetGasStationsForLocation(coord, &maxDist)
-		if err == nil {
-			c.JSON(http.StatusOK, *results)
+		if err != nil {
+			e := APIError{Code: 500, Description: "Error querying database:\n" + err.Error()}
+			c.AbortWithStatusJSON(e.Code, e)
+			return
 		}
-	}
-	if err != nil {
-		e := APIError{Code: 400, Description: "Error querying database" + err.Error()}
-		c.AbortWithStatusJSON(e.Code, e)
+		c.JSON(http.StatusOK, *results)
 	}
 }
 
-func getCountryFromCookiesOrFetchFromCoord(c *gin.Context, coord *db.LatLong) (string, error) {
+func getCountryFromSessionOrFetch(c *gin.Context, coord *db.LatLong) (string, error) {
 	// The session is checked for avoiding quering from which country the coordinates correspond to
 	session := sessions.Default(c)
 	sessionCountryCode := session.Get("countryCode")
@@ -74,11 +81,12 @@ func getCountryFromCookiesOrFetchFromCoord(c *gin.Context, coord *db.LatLong) (s
 		// If no cookies are available, then query the country
 		countryCode, err := countrylocator.GetCountryByCoordinates(coord.Lat, coord.Long)
 		if err != nil {
-			e := APIError{Code: 500, Description: "Error finding country from coordinates"}
-			c.AbortWithStatusJSON(e.Code, e)
-			return "", e
+			return "", errors.New("Error getting country from coordinates:\n" + err.Error())
 		}
 		session.Set("countryCode", countryCode)
+		if err := session.Save(); err != nil {
+			return "", errors.New("Error saving session:\n" + err.Error())
+		}
 		return countryCode, nil
 	} else {
 		return sessionCountryCode.(string), nil
