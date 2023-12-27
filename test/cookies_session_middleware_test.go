@@ -12,27 +12,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const userIdValue = "123"
+
 func TestCookieSessionMiddleware(t *testing.T) {
-	const userIdValue = "123"
-	gin.SetMode(gin.TestMode)
-	r := gin.Default()
-
-	r.Use(router.CookieSessionMiddleware())
-
-	r.GET("/set", func(c *gin.Context) {
-		session := sessions.Default(c)
-		session.Set("userID", userIdValue)
-		session.Save()
-		c.JSON(http.StatusOK, gin.H{"message": "User ID set in session"})
-	})
-
-	r.GET("/get", func(c *gin.Context) {
-		session := sessions.Default(c)
-		userID := session.Get("userID")
-
-		c.JSON(http.StatusOK, gin.H{"userID": userID})
-	})
-
+	r := setupRouter()
 	// Create a test request to set the user ID
 	setReq, err := http.NewRequest(http.MethodGet, "/set", nil)
 	assert.NoError(t, err)
@@ -61,4 +44,26 @@ func TestCookieSessionMiddleware(t *testing.T) {
 	assert.NoError(t, json.Unmarshal(getRecorder.Body.Bytes(), &getResponse))
 	// Check the user ID retrieved from the session
 	assert.Equal(t, userIdValue, getResponse["userID"])
+}
+
+func setupRouter() *gin.Engine {
+	gin.SetMode(gin.TestMode)
+	r := gin.New()
+
+	r.Use(router.CookieSessionMiddleware())
+
+	r.GET("/set", func(c *gin.Context) {
+		session := sessions.Default(c)
+		session.Set("userID", userIdValue)
+		session.Save()
+		c.JSON(http.StatusOK, gin.H{"message": "User ID set in session"})
+	})
+
+	r.GET("/get", func(c *gin.Context) {
+		session := sessions.Default(c)
+		userID := session.Get("userID")
+
+		c.JSON(http.StatusOK, gin.H{"userID": userID})
+	})
+	return r
 }
