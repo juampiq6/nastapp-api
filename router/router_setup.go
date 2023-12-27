@@ -17,7 +17,7 @@ func SetupRouter() *gin.Engine {
 	r.Use(RateLimitingMiddleware(time.Second, 6))
 	r.Use(RateLimitingMiddleware(time.Minute, 100))
 	r.Use(RateLimitingMiddleware(time.Hour*24, 1500))
-	r.Use(cookieSessionMiddleware())
+	r.Use(CookieSessionMiddleware())
 	setupSwagger(r)
 
 	// Ping test

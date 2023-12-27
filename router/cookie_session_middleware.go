@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func cookieSessionMiddleware() gin.HandlerFunc {
+func CookieSessionMiddleware() gin.HandlerFunc {
 	authKey := make([]byte, 32)
 	encriptionKey := make([]byte, 32)
 	_, err := rand.Read(authKey)
