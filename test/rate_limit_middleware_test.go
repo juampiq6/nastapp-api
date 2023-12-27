@@ -17,18 +17,18 @@ var limit int
 func TestRateLimitingMiddleware(t *testing.T) {
 	duration = time.Second
 	limit = 6
-	t.Run("RateLimitForSecond", TestPingEndpointWithRateLimit)
+	t.Run("RateLimitForSecond", pingEndpointWithRateLimit)
 	duration = time.Minute
 	limit = 100
-	t.Run("RateLimitForMinute", TestPingEndpointWithRateLimit)
+	t.Run("RateLimitForMinute", pingEndpointWithRateLimit)
 	duration = time.Hour * 24
 	limit = 1500
-	t.Run("RateLimitForDay", TestPingEndpointWithRateLimit)
+	t.Run("RateLimitForDay", pingEndpointWithRateLimit)
 }
 
-func TestPingEndpointWithRateLimit(t *testing.T) {
+func pingEndpointWithRateLimit(t *testing.T) {
 	start := time.Now()
-	router := SetupRouterWithRateLimits(duration, limit)
+	router := setupRouterWithRateLimits(duration, limit)
 	// Run multiple requests within the rate limit
 	for i := 0; i <= limit; i++ {
 
@@ -52,7 +52,7 @@ func TestPingEndpointWithRateLimit(t *testing.T) {
 	}
 }
 
-func SetupRouterWithRateLimits(duration time.Duration, limit int) *gin.Engine {
+func setupRouterWithRateLimits(duration time.Duration, limit int) *gin.Engine {
 	gin.SetMode(gin.TestMode)
 
 	r := gin.New()
