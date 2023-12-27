@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func setupCookieSession(r *gin.Engine) {
+func cookieSessionMiddleware() gin.HandlerFunc {
 	authKey := make([]byte, 32)
 	encriptionKey := make([]byte, 32)
 	_, err := rand.Read(authKey)
@@ -18,5 +18,5 @@ func setupCookieSession(r *gin.Engine) {
 	}
 	store := cookie.NewStore(authKey, encriptionKey)
 	store.Options(sessions.Options{MaxAge: 60 * 60 * 24, HttpOnly: true, Secure: false})
-	r.Use(sessions.Sessions("userSession", store))
+	return sessions.Sessions("userSession", store)
 }

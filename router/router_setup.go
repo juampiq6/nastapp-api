@@ -2,6 +2,7 @@ package router
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,7 +13,11 @@ const petrol_price_path = "/petrol_price"
 func SetupRouter() *gin.Engine {
 
 	r := gin.Default()
-	setupCookieSession(r)
+	r.ForwardedByClientIP = true
+	r.Use(RateLimitingMiddleware(time.Second, 6))
+	r.Use(RateLimitingMiddleware(time.Minute, 100))
+	r.Use(RateLimitingMiddleware(time.Hour*24, 1500))
+	r.Use(cookieSessionMiddleware())
 	setupSwagger(r)
 
 	// Ping test
