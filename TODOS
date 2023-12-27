@@ -12,6 +12,9 @@ Features:
 
 Infra:
 - Add a API gateway for security? Already added basic rate limiting middleware, infra agnostic
+- Create environment configurable vars
+  - Rate limit
+  - Cookies TTL
 - Research cloudflare tools
 - Research best budget API hosting
 - Inspect possible memory leaks to reduce RAM usage
