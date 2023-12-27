@@ -1,5 +1,17 @@
+Features:
 - https://github.com/rs/zerolog logging
 - Add tests
-- Dockerize API
-- Add a API gateway
-- Authentication flow? necessary for users uploading prices? limit by time and be a simple username?
+- Authentication flow
+  - Necessary for users uploading prices
+  - Limit uploads by time
+- Implement point system to reward oracles
+- Think of economic perspective
+  - Oracles
+  - Gas station owners and deals
+  - API consumers
+
+Infra:
+- Add a API gateway for security? Already added basic rate limiting middleware, infra agnostic
+- Research cloudflare tools
+- Research best budget API hosting
+- Inspect possible memory leaks to reduce RAM usage
